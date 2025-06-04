@@ -1,0 +1,149 @@
+.homepage-footer {
+  background-color: #f9fafb;
+  padding: 70px 0 30px;
+  color: #4a4a4a;
+
+  &__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  &__main {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 50px;
+    margin-bottom: 60px;
+  }
+
+  &__brand {
+    flex: 1;
+    min-width: 250px;
+  }
+
+  &__description {
+    margin-top: 20px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #666;
+    max-width: 350px;
+  }
+
+  &__social {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+  }
+
+  &__social-link {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(0, 200, 83, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background-color: #00c853;
+      color: white;
+      transform: translateY(-3px);
+    }
+  }
+
+  &__social-icon {
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  &__links-grid {
+    flex: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+  }
+
+  &__links-column {
+    flex: 1;
+    min-width: 150px;
+  }
+
+  &__column-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #1a1a1a;
+  }
+
+  &__links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__link {
+    display: block;
+    margin-bottom: 12px;
+    color: #666;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.2s ease;
+    
+    &:hover {
+      color: #00c853;
+    }
+  }
+
+  &__bottom {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  &__copyright {
+    font-size: 0.9rem;
+    color: #666;
+  }
+
+  &__legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  &__legal-link {
+    font-size: 0.9rem;
+    color: #666;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    
+    &:hover {
+      color: #00c853;
+    }
+  }
+
+  @media (max-width: 768px) {
+    &__main {
+      flex-direction: column;
+      gap: 40px;
+    }
+    
+    &__description {
+      max-width: 100%;
+    }
+    
+    &__links-grid {
+      gap: 30px;
+    }
+    
+    &__bottom {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  }
+} 
