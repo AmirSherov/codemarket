@@ -26,5 +26,5 @@ def api_root(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', api_root),  # Базовый API endpoint
-    path('api-auth/', include('rest_framework.urls')),  # Аутентификация DRF
+    path('api/auth/', include('authentication.urls')),  # Auth URLs
 ]

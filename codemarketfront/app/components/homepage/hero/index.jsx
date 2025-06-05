@@ -56,32 +56,6 @@ const Hero = () => {
           </div>
         </div>
       </div>
-      
-      <div className="homepage-hero__search">
-        <div className="homepage-hero__search-container">
-          <div className="homepage-hero__search-input-group">
-            <input 
-              type="text" 
-              className="homepage-hero__search-input" 
-              placeholder="Поиск по ключевым словам (React, Python, UI/UX...)" 
-            />
-          </div>
-          <div className="homepage-hero__search-input-group">
-            <select className="homepage-hero__search-select">
-              <option value="">Все категории</option>
-              <option value="frontend">Frontend</option>
-              <option value="backend">Backend</option>
-              <option value="fullstack">FullStack</option>
-              <option value="mobile">Mobile</option>
-              <option value="devops">DevOps</option>
-              <option value="qa">QA</option>
-            </select>
-          </div>
-          <button className="homepage-hero__search-button">
-            Найти
-          </button>
-        </div>
-      </div>
     </section>
   );
 };

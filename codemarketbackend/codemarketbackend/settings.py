@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,7 +41,11 @@ INSTALLED_APPS = [
     
     # Third party apps
     'rest_framework',
+    'rest_framework_simplejwt',
     'corsheaders',
+    
+    # Local apps
+    'authentication.apps.AuthenticationConfig',
 ]
 
 MIDDLEWARE = [
@@ -68,10 +73,38 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ],
 }
+
+# JWT settings
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'VERIFYING_KEY': None,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+}
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'sher4mir@gmail.com'  
+EMAIL_HOST_PASSWORD = 'aecu hjiu ifyq nawe'  
+DEFAULT_FROM_EMAIL = 'CodeMarket <sher4mir@gmail.com>'  
+
+# В режиме разработки можно использовать консольный бэкенд
+AUTH_USER_MODEL = 'authentication.User'
 
 ROOT_URLCONF = 'codemarketbackend.urls'
 
@@ -96,27 +129,26 @@ WSGI_APPLICATION = 'codemarketbackend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Используйте это для PostgreSQL (Render)
+# SQLite для разработки
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'codemarket_mylj', 
-        'USER': 'codemarket_mylj_user', 
-        'PASSWORD': 'iHwyLIk8Ta3VrB3trNGwEkrX5ZsmEtJh',  
-        'HOST': 'dpg-d100ruvdiees73fbc9ag-a.oregon-postgres.render.com',
-        'PORT': '5432',  
-        'OPTIONS': {
-            'sslmode': 'require'  
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
-
-
+# PostgreSQL для продакшена
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'codemarket_mylj', 
+#         'USER': 'codemarket_mylj_user', 
+#         'PASSWORD': 'iHwyLIk8Ta3VrB3trNGwEkrX5ZsmEtJh',  
+#         'HOST': 'dpg-d100ruvdiees73fbc9ag-a.oregon-postgres.render.com',
+#         'PORT': '5432',  
+#         'OPTIONS': {
+#             'sslmode': 'require'  
+#         }
 #     }
 # }
 

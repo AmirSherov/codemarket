@@ -31,11 +31,8 @@ const Navigation = () => {
         </div>
         
         <div className="homepage-navigation__auth">
-          <Link href="/login" className="homepage-navigation__button homepage-navigation__button--login">
+          <Link href="/pages/auth" className="homepage-navigation__button homepage-navigation__button--login">
             Войти
-          </Link>
-          <Link href="/signup" className="homepage-navigation__button homepage-navigation__button--signup">
-            Регистрация
           </Link>
         </div>
         
