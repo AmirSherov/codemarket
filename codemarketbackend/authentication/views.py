@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions, status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -9,34 +9,34 @@ from .serializers import (
     UserRegistrationSerializer, 
     UserSerializer, 
     EmailVerificationSerializer,
-    ResendVerificationSerializer
+    ResendVerificationSerializer,
+    UserProfileUpdateSerializer
 )
 from .models import User, EmailVerificationCode
-from .utils import generate_verification_code, send_verification_email, verify_code
+from .utils.verification import generate_verification_code, send_verification_email, verify_code
+from .utils.professions import get_all_professions, get_technologies_by_profession
+import re
+from rest_framework.permissions import IsAuthenticated
+import logging
 
 # Create your views here.
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
-        try:
-            data = super().validate(attrs)
-            user = self.user
-            if not user.is_email_verified:
-                from rest_framework import serializers
-                raise serializers.ValidationError({
-                    "email_verified": False,
-                    "detail": "Электронная почта не подтверждена",
-                    "email": user.email,
-                    "username": user.username,
-                    "first_name": user.first_name,
-                    "last_name": user.last_name
-                })
-                
-            return data
-        except Exception as e:
-            if not hasattr(e, 'detail') or 'email_verified' not in getattr(e, 'detail', {}):
-                raise e
-            raise
+        data = super().validate(attrs)
+        data['user'] = UserSerializer(self.user).data
+        if not self.user.is_email_verified and not self.user.is_superuser:
+            from rest_framework import serializers
+            raise serializers.ValidationError({
+                "email_verified": False,
+                "detail": "Электронная почта не подтверждена",
+                "email": self.user.email,
+                "username": self.user.username,
+                "first_name": self.user.first_name,
+                "last_name": self.user.last_name
+            })
+            
+        return data
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
@@ -63,12 +63,31 @@ class RegisterView(generics.CreateAPIView):
             "user": UserSerializer(user).data
         }, status=status.HTTP_201_CREATED)
 
-class UserDetailView(generics.RetrieveAPIView):
+class UserDataView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        user = request.user
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+
+class UserDetailView(generics.RetrieveUpdateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = UserSerializer
     
     def get_object(self):
         return self.request.user
+    
+    def get_serializer_class(self):
+        if self.request.method in ['PUT', 'PATCH']:
+            return UserProfileUpdateSerializer
+        return UserSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        data = serializer.data
+        return Response(data)
 
 class VerifyEmailView(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -122,8 +141,6 @@ class ResendVerificationCodeView(APIView):
                     return Response({
                         "message": "Электронная почта уже подтверждена"
                     }, status=status.HTTP_400_BAD_REQUEST)
-                
-                # Генерируем и отправляем новый код
                 verification = generate_verification_code(user, email)
                 send_verification_email(user, email, verification.code)
                 
@@ -141,3 +158,22 @@ class ResendVerificationCodeView(APIView):
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ProfessionViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.AllowAny]
+
+    def list(self, request):
+        professions = get_all_professions()
+        return Response(professions)
+
+class TechnologyViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.AllowAny]
+    
+    def list(self, request):
+        profession_id = request.query_params.get('profession_id')
+        if not profession_id:
+            return Response({"error": "Требуется указать profession_id"}, 
+                          status=status.HTTP_400_BAD_REQUEST)
+            
+        technologies = get_technologies_by_profession(profession_id)
+        return Response(technologies)

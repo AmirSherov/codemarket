@@ -1,9 +1,8 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 import './VerifyEmail.scss';
-import { API_URL, setTokens, resendVerificationCode } from '../../utilits/auth';
+import { verifyEmail, resendVerificationCode } from '../../utilits/auth';
 
 const VerifyEmail = ({ email, onSuccess, onBack }) => {
   const router = useRouter();
@@ -57,44 +56,24 @@ const VerifyEmail = ({ email, onSuccess, onBack }) => {
     setLoading(true);
     setError('');
     
-    try {      const response = await axios.post(
-        `${API_URL}/api/auth/verify-email/`,
-        { 
-          code: verificationCode,
-          email: email 
-        },
-        { 
-          headers: { 
-            'Content-Type': 'application/json'
-          } 
+    try {
+      const result = await verifyEmail(email, verificationCode);
+      
+      if (result.success) {
+        setSuccess('Email успешно подтвержден! Выполняется вход...');
+        
+        if (typeof onSuccess === 'function') {
+          onSuccess();
         }
-      );
-      
-      // После успешной верификации обновляем токены и данные пользователя
-      if (response.data.access && response.data.refresh) {
-        setTokens(response.data.access, response.data.refresh);
-        if (response.data.user) {
-          localStorage.setItem('user', JSON.stringify(response.data.user));
-        }
-      }
-      
-      setSuccess('Email успешно подтвержден! Выполняется вход...');
-      
-      if (typeof onSuccess === 'function') {
-        onSuccess();
-      }
-      
-      // Небольшая задержка для того, чтобы пользователь увидел сообщение об успехе
-      setTimeout(() => {
-        router.push('/pages/dashboard');
-      }, 1500);
-      
-    } catch (err) {
-      if (err.response && err.response.data) {
-        setError(err.response.data.error || 'Произошла ошибка при подтверждении кода');
+        
+        setTimeout(() => {
+          router.push('/pages/dashboard');
+        }, 300);
       } else {
-        setError('Не удалось подтвердить код. Пожалуйста, попробуйте снова.');
+        setError(result.error || 'Произошла ошибка при подтверждении кода');
       }
+    } catch (err) {
+      setError('Не удалось подтвердить код. Пожалуйста, попробуйте снова.');
     } finally {
       setLoading(false);
     }

@@ -22,10 +22,7 @@ def send_verification_email(user, email, code):
     Отправляет электронное письмо с кодом подтверждения
     """
     subject = 'CodeMarket - Подтверждение электронной почты'
-    html_message = render_to_string('email/verification_email.html', {
-        'user': user,
-        'code': code,
-    }) if settings.DEBUG is False else f"""
+    html_message = f"""
     <html>
     <head>
         <style>

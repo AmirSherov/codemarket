@@ -1,0 +1,49 @@
+.user-type-selector {
+  margin-bottom: 20px;
+  
+  h3 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: #333;
+    font-weight: 500;
+  }
+  
+  .user-type-options {
+    display: flex;
+    gap: 15px;
+    
+    .user-type-option {
+      flex: 1;
+      padding: 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        border-color: #7c5cfc;
+        background-color: rgba(124, 92, 252, 0.05);
+      }
+      
+      &.active {
+        border-color: #7c5cfc;
+        background-color: rgba(124, 92, 252, 0.1);
+      }
+      
+      .option-icon {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        
+        img {
+          width: 48px;
+          height: 48px;
+        }
+      }
+      
+      .option-text {
+        font-weight: 500;
+      }
+    }
+  }
+} 

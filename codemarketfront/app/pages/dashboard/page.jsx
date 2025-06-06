@@ -23,7 +23,22 @@ const Dashboard = () => {
   if (loading) {
     return <Loader />;
   }
-
+  function getAge(birthDateStr) {
+    const birthDate = new Date(birthDateStr);
+    const today = new Date();
+  
+    let age = today.getFullYear() - birthDate.getFullYear();
+  
+    const hasHadBirthdayThisYear =
+      today.getMonth() > birthDate.getMonth() ||
+      (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
+  
+    if (!hasHadBirthdayThisYear) {
+      age--;
+    }
+  
+    return age;
+  }
   return (
     <div className="dashboard">
       <div className="dashboard-header">
@@ -48,7 +63,12 @@ const Dashboard = () => {
                 <p><span>Полное имя:</span> {userData.first_name} {userData.last_name}</p>
                 <p><span>Email:</span> {userData.email}</p>
                 <p><span>Никнейм:</span> {userData.nickname}</p>
-                <p><span>Возраст:</span> {userData.age}</p>
+                <p><span>Возраст:</span> {getAge(userData.birth_date)}</p>
+                <p><span>Тип пользователя:</span> {userData.user_type}</p>
+                <p><span>Компания:</span> {userData.company_name}</p>
+                <p><span>Должность:</span> {userData.company_position}</p>
+                <p><span>Профессия:</span> {userData.professions.map(profession => profession.name).join(', ')}</p>
+                <p><span>Технологии:</span> {userData.technologies.map(tech => tech.name).join(', ')}</p>
               </div>
             </div>
           ) : (

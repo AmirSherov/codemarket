@@ -1,0 +1,628 @@
+{
+  "professions": {
+    "frontend": {
+      "id": "frontend",
+      "name": "Frontend Developer",
+      "technologies": [
+        {
+          "id": "react",
+          "name": "React"
+        },
+        {
+          "id": "angular",
+          "name": "Angular"
+        },
+        {
+          "id": "vue",
+          "name": "Vue.js"
+        },
+        {
+          "id": "next",
+          "name": "Next.js"
+        },
+        {
+          "id": "svelte",
+          "name": "Svelte"
+        },
+        {
+          "id": "javascript",
+          "name": "JavaScript"
+        },
+        {
+          "id": "typescript",
+          "name": "TypeScript"
+        },
+        {
+          "id": "html",
+          "name": "HTML"
+        },
+        {
+          "id": "css",
+          "name": "CSS"
+        },
+        {
+          "id": "sass",
+          "name": "SASS/SCSS"
+        },
+        {
+          "id": "redux",
+          "name": "Redux"
+        },
+        {
+          "id": "mobx",
+          "name": "MobX"
+        },
+        {
+          "id": "webpack",
+          "name": "Webpack"
+        },
+        {
+          "id": "vite",
+          "name": "Vite"
+        },
+        {
+          "id": "tailwind",
+          "name": "Tailwind CSS"
+        }
+      ]
+    },
+    "backend": {
+      "id": "backend",
+      "name": "Backend Developer",
+      "technologies": [
+        {
+          "id": "nodejs",
+          "name": "Node.js"
+        },
+        {
+          "id": "express",
+          "name": "Express"
+        },
+        {
+          "id": "django",
+          "name": "Django"
+        },
+        {
+          "id": "flask",
+          "name": "Flask"
+        },
+        {
+          "id": "fastapi",
+          "name": "FastAPI"
+        },
+        {
+          "id": "laravel",
+          "name": "Laravel"
+        },
+        {
+          "id": "spring",
+          "name": "Spring Boot"
+        },
+        {
+          "id": "rails",
+          "name": "Ruby on Rails"
+        },
+        {
+          "id": "aspnet",
+          "name": "ASP.NET"
+        },
+        {
+          "id": "postgresql",
+          "name": "PostgreSQL"
+        },
+        {
+          "id": "mysql",
+          "name": "MySQL"
+        },
+        {
+          "id": "mongodb",
+          "name": "MongoDB"
+        },
+        {
+          "id": "redis",
+          "name": "Redis"
+        },
+        {
+          "id": "graphql",
+          "name": "GraphQL"
+        }
+      ]
+    },
+    "fullstack": {
+      "id": "fullstack",
+      "name": "Fullstack Developer",
+      "technologies": [
+        {
+          "id": "mern",
+          "name": "MERN Stack"
+        },
+        {
+          "id": "mean",
+          "name": "MEAN Stack"
+        },
+        {
+          "id": "django-react",
+          "name": "Django + React"
+        },
+        {
+          "id": "laravel-vue",
+          "name": "Laravel + Vue"
+        },
+        {
+          "id": "spring-angular",
+          "name": "Spring Boot + Angular"
+        },
+        {
+          "id": "rails-react",
+          "name": "Ruby on Rails + React"
+        },
+        {
+          "id": "aspnet-angular",
+          "name": "ASP.NET + Angular"
+        }
+      ]
+    },
+    "mobile": {
+      "id": "mobile",
+      "name": "Mobile Developer",
+      "technologies": [
+        {
+          "id": "android-java",
+          "name": "Android (Java)"
+        },
+        {
+          "id": "android-kotlin",
+          "name": "Android (Kotlin)"
+        },
+        {
+          "id": "ios-swift",
+          "name": "iOS (Swift)"
+        },
+        {
+          "id": "ios-objc",
+          "name": "iOS (Objective-C)"
+        },
+        {
+          "id": "react-native",
+          "name": "React Native"
+        },
+        {
+          "id": "flutter",
+          "name": "Flutter"
+        },
+        {
+          "id": "xamarin",
+          "name": "Xamarin"
+        },
+        {
+          "id": "ionic",
+          "name": "Ionic"
+        },
+        {
+          "id": "cordova",
+          "name": "Cordova"
+        }
+      ]
+    },
+    "devops": {
+      "id": "devops",
+      "name": "DevOps Engineer",
+      "technologies": [
+        {
+          "id": "docker",
+          "name": "Docker"
+        },
+        {
+          "id": "kubernetes",
+          "name": "Kubernetes"
+        },
+        {
+          "id": "aws",
+          "name": "AWS"
+        },
+        {
+          "id": "azure",
+          "name": "Azure"
+        },
+        {
+          "id": "gcp",
+          "name": "Google Cloud"
+        },
+        {
+          "id": "jenkins",
+          "name": "Jenkins"
+        },
+        {
+          "id": "gitlab-ci",
+          "name": "GitLab CI/CD"
+        },
+        {
+          "id": "github-actions",
+          "name": "GitHub Actions"
+        },
+        {
+          "id": "terraform",
+          "name": "Terraform"
+        },
+        {
+          "id": "ansible",
+          "name": "Ansible"
+        },
+        {
+          "id": "prometheus",
+          "name": "Prometheus"
+        },
+        {
+          "id": "grafana",
+          "name": "Grafana"
+        },
+        {
+          "id": "elk",
+          "name": "ELK Stack"
+        }
+      ]
+    },
+    "data-science": {
+      "id": "data-science",
+      "name": "Data Scientist",
+      "technologies": [
+        {
+          "id": "python-ds",
+          "name": "Python"
+        },
+        {
+          "id": "r",
+          "name": "R"
+        },
+        {
+          "id": "sql-ds",
+          "name": "SQL"
+        },
+        {
+          "id": "pandas",
+          "name": "Pandas"
+        },
+        {
+          "id": "numpy",
+          "name": "NumPy"
+        },
+        {
+          "id": "scipy",
+          "name": "SciPy"
+        },
+        {
+          "id": "tensorflow-ds",
+          "name": "TensorFlow"
+        },
+        {
+          "id": "pytorch-ds",
+          "name": "PyTorch"
+        },
+        {
+          "id": "scikit-learn",
+          "name": "scikit-learn"
+        },
+        {
+          "id": "keras-ds",
+          "name": "Keras"
+        },
+        {
+          "id": "tableau",
+          "name": "Tableau"
+        },
+        {
+          "id": "powerbi",
+          "name": "Power BI"
+        },
+        {
+          "id": "jupyter",
+          "name": "Jupyter"
+        }
+      ]
+    },
+    "ui-ux": {
+      "id": "ui-ux",
+      "name": "UI/UX Designer",
+      "technologies": [
+        {
+          "id": "figma",
+          "name": "Figma"
+        },
+        {
+          "id": "xd",
+          "name": "Adobe XD"
+        },
+        {
+          "id": "sketch",
+          "name": "Sketch"
+        },
+        {
+          "id": "invision",
+          "name": "InVision"
+        },
+        {
+          "id": "zeplin",
+          "name": "Zeplin"
+        },
+        {
+          "id": "photoshop",
+          "name": "Photoshop"
+        },
+        {
+          "id": "illustrator",
+          "name": "Illustrator"
+        },
+        {
+          "id": "prototyping",
+          "name": "Prototyping"
+        },
+        {
+          "id": "user-research",
+          "name": "User Research"
+        },
+        {
+          "id": "wireframing",
+          "name": "Wireframing"
+        },
+        {
+          "id": "usability-testing",
+          "name": "Usability Testing"
+        }
+      ]
+    },
+    "qa": {
+      "id": "qa",
+      "name": "QA Engineer",
+      "technologies": [
+        {
+          "id": "manual-testing",
+          "name": "Manual Testing"
+        },
+        {
+          "id": "automated-testing",
+          "name": "Automated Testing"
+        },
+        {
+          "id": "selenium",
+          "name": "Selenium"
+        },
+        {
+          "id": "cypress",
+          "name": "Cypress"
+        },
+        {
+          "id": "jest",
+          "name": "Jest"
+        },
+        {
+          "id": "mocha",
+          "name": "Mocha"
+        },
+        {
+          "id": "postman",
+          "name": "Postman"
+        },
+        {
+          "id": "junit",
+          "name": "JUnit"
+        },
+        {
+          "id": "testng",
+          "name": "TestNG"
+        },
+        {
+          "id": "jira-qa",
+          "name": "JIRA"
+        },
+        {
+          "id": "testrail",
+          "name": "TestRail"
+        },
+        {
+          "id": "performance-testing",
+          "name": "Performance Testing"
+        }
+      ]
+    },
+    "pm": {
+      "id": "pm",
+      "name": "Project Manager",
+      "technologies": [
+        {
+          "id": "agile",
+          "name": "Agile"
+        },
+        {
+          "id": "scrum",
+          "name": "Scrum"
+        },
+        {
+          "id": "kanban",
+          "name": "Kanban"
+        },
+        {
+          "id": "waterfall",
+          "name": "Waterfall"
+        },
+        {
+          "id": "jira-pm",
+          "name": "JIRA"
+        },
+        {
+          "id": "trello",
+          "name": "Trello"
+        },
+        {
+          "id": "asana",
+          "name": "Asana"
+        },
+        {
+          "id": "ms-project",
+          "name": "MS Project"
+        },
+        {
+          "id": "confluence",
+          "name": "Confluence"
+        },
+        {
+          "id": "risk-management",
+          "name": "Risk Management"
+        },
+        {
+          "id": "budgeting",
+          "name": "Budgeting"
+        },
+        {
+          "id": "resource-planning",
+          "name": "Resource Planning"
+        }
+      ]
+    },
+    "game-dev": {
+      "id": "game-dev",
+      "name": "Game Developer",
+      "technologies": [
+        {
+          "id": "unity",
+          "name": "Unity"
+        },
+        {
+          "id": "unreal",
+          "name": "Unreal Engine"
+        },
+        {
+          "id": "godot",
+          "name": "Godot"
+        },
+        {
+          "id": "csharp",
+          "name": "C#"
+        },
+        {
+          "id": "cpp",
+          "name": "C++"
+        },
+        {
+          "id": "3d-modeling",
+          "name": "3D Modeling"
+        },
+        {
+          "id": "animation",
+          "name": "Animation"
+        },
+        {
+          "id": "game-design",
+          "name": "Game Design"
+        },
+        {
+          "id": "physics",
+          "name": "Physics"
+        },
+        {
+          "id": "multiplayer",
+          "name": "Multiplayer"
+        },
+        {
+          "id": "ar-vr",
+          "name": "AR/VR Development"
+        }
+      ]
+    },
+    "blockchain": {
+      "id": "blockchain",
+      "name": "Blockchain Developer",
+      "technologies": [
+        {
+          "id": "solidity",
+          "name": "Solidity"
+        },
+        {
+          "id": "ethereum",
+          "name": "Ethereum"
+        },
+        {
+          "id": "smart-contracts",
+          "name": "Smart Contracts"
+        },
+        {
+          "id": "web3",
+          "name": "Web3.js"
+        },
+        {
+          "id": "truffle",
+          "name": "Truffle"
+        },
+        {
+          "id": "hardhat",
+          "name": "Hardhat"
+        },
+        {
+          "id": "bsc",
+          "name": "Binance Smart Chain"
+        },
+        {
+          "id": "solana",
+          "name": "Solana"
+        },
+        {
+          "id": "nft",
+          "name": "NFTs"
+        },
+        {
+          "id": "dapps",
+          "name": "DApps"
+        },
+        {
+          "id": "crypto",
+          "name": "Cryptocurrency"
+        }
+      ]
+    },
+    "ai-ml": {
+      "id": "ai-ml",
+      "name": "AI/ML Engineer",
+      "technologies": [
+        {
+          "id": "machine-learning",
+          "name": "Machine Learning"
+        },
+        {
+          "id": "deep-learning",
+          "name": "Deep Learning"
+        },
+        {
+          "id": "nlp",
+          "name": "Natural Language Processing"
+        },
+        {
+          "id": "computer-vision",
+          "name": "Computer Vision"
+        },
+        {
+          "id": "reinforcement-learning",
+          "name": "Reinforcement Learning"
+        },
+        {
+          "id": "tensorflow-ai",
+          "name": "TensorFlow AI"
+        },
+        {
+          "id": "pytorch-ai",
+          "name": "PyTorch AI"
+        },
+        {
+          "id": "keras-ai",
+          "name": "Keras AI"
+        },
+        {
+          "id": "scikit-learn-ai",
+          "name": "scikit-learn AI"
+        },
+        {
+          "id": "opencv",
+          "name": "OpenCV"
+        }
+      ]
+    }
+  }
+} 

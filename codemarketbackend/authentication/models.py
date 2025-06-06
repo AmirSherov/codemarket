@@ -4,10 +4,20 @@ import random
 from django.utils import timezone
 from datetime import timedelta
 
+class UserType(models.TextChoices):
+    JOB_SEEKER = 'job_seeker', 'Ищу работу'
+    EMPLOYER = 'employer', 'Предлагаю работу'
+
 class User(AbstractUser):
-    age = models.PositiveIntegerField(null=True, blank=True)
+    birth_date = models.DateField(null=True, blank=True)
     nickname = models.CharField(max_length=50, unique=True, blank=True, null=True)
+    email = models.EmailField(unique=True)
     is_email_verified = models.BooleanField(default=False)
+    user_type = models.CharField(max_length=50, blank=True)
+    company_name = models.CharField(max_length=255, blank=True)
+    company_position = models.CharField(max_length=255, blank=True)
+    profession_ids = models.JSONField(default=list, blank=True)
+    technology_ids = models.JSONField(default=list, blank=True)
     
     class Meta:
         verbose_name = 'User'

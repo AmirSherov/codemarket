@@ -6,6 +6,10 @@ import { login, register, isAuthenticated, verifyEmail, resendVerificationCode }
 import { useRouteGuard } from '../../utilits/routeGuard';
 import VerifyEmail from '../../components/verify-email/VerifyEmail';
 import EmailVerificationModal from '../../components/modal/EmailVerificationModal';
+import UserTypeSelector from '../../components/user-type-selector/UserTypeSelector';
+import ProfessionSelector from '../../components/profession-selector/ProfessionSelector';
+import TechnologySelector from '../../components/technology-selector/TechnologySelector';
+import EmployerForm from '../../components/employer-form/EmployerForm';
 import './auth.scss';
 
 const AuthPage = () => {
@@ -16,6 +20,8 @@ const AuthPage = () => {
   const [showVerification, setShowVerification] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState('');
   const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [registrationStep, setRegistrationStep] = useState(1);
+  const [selectedProfessionId, setSelectedProfessionId] = useState(null);
   
   const [loginData, setLoginData] = useState({
     username: '',
@@ -27,9 +33,14 @@ const AuthPage = () => {
     email: '',
     first_name: '',
     last_name: '',
-    age: '',
+    birth_date: '',
     password: '',
-    password2: ''
+    password2: '',
+    user_type: '',
+    company_name: '',
+    company_position: '',
+    profession_ids: [],
+    technology_ids: []
   });
   
   // Используем хук защиты маршрута с обратным требованием (requireAuth = false)
@@ -45,7 +56,37 @@ const AuthPage = () => {
     const { name, value } = e.target;
     setRegisterData({ ...registerData, [name]: value });
   };
-    const handleLoginSubmit = async (e) => {
+
+  const handleUserTypeChange = (userType) => {
+    setRegisterData({ ...registerData, user_type: userType });
+  };
+
+  const handleProfessionChange = (professionId) => {
+    setSelectedProfessionId(professionId);
+    setRegisterData({ 
+      ...registerData, 
+      profession_ids: [professionId],
+      technology_ids: [] 
+    });
+  };
+
+  const handleTechnologiesChange = (selectedTechIds) => {
+    setRegisterData({ ...registerData, technology_ids: selectedTechIds });
+  };
+
+  const handleEmployerDataChange = (employerData) => {
+    setRegisterData({ ...registerData, ...employerData });
+  };
+
+  const nextStep = () => {
+    setRegistrationStep(registrationStep + 1);
+  };
+
+  const prevStep = () => {
+    setRegistrationStep(registrationStep - 1);
+  };
+  
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -55,16 +96,10 @@ const AuthPage = () => {
     if (result.success) {
       router.push('/pages/dashboard');
     } else if (result.requireEmailVerification) {
-      let emailValue = result.email;
-      if (Array.isArray(emailValue) && emailValue.length > 0) {
-        emailValue = emailValue[0];
-      } else if (Array.isArray(emailValue)) {
-        emailValue = '';
-      }
-      setRegisteredEmail(String(emailValue || ''));
-  
+      const emailValue = Array.isArray(result.email) ? result.email[0] : result.email;
+      setRegisteredEmail(emailValue || '');
       setShowVerificationModal(true);
-      setError(''); 
+      setError('');
     } else if (result.error) {
       setError(result.error);
     }
@@ -73,7 +108,12 @@ const AuthPage = () => {
   };
   
   const handleRegisterSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
+    if (registerData.user_type === 'job_seeker' && registerData.profession_ids.length === 0) {
+      setError('Пожалуйста, выберите хотя бы одну профессию');
+      return;
+    }
+    
     setLoading(true);
     setError('');
     
@@ -94,29 +134,23 @@ const AuthPage = () => {
     
     setLoading(false);
   };
-    const handleVerificationConfirm = async () => {
-    setShowVerificationModal(false);
-    setShowVerification(true); 
-
+  
+  const handleVerificationConfirm = async () => {
+    setLoading(true);
+    setError('');
+    
     try {
-      if (!registeredEmail) {
-        console.error('[AuthPage] Email для повторной отправки кода не найден.');
-        setError('Email не найден. Попробуйте инициировать отправку с экрана верификации.');
-        return;
-      }
-
       const result = await resendVerificationCode(registeredEmail);
-
-      if (result && result.success) {
-        setError(''); 
+      if (result.success) {
+        setShowVerificationModal(false);
+        setShowVerification(true);
       } else {
-        const errorMessage = (result && result.error) || 'Не удалось повторно отправить код подтверждения.';
-        console.error('[AuthPage] Ошибка при повторной отправке кода:', errorMessage);
-        setError(errorMessage + ' Попробуйте снова с экрана верификации.');
+        setError(result.error);
       }
-    } catch (err) {
-      console.error('[AuthPage] Критическая ошибка при resendVerificationCode:', err);
-      setError('Произошла критическая ошибка при повторной отправке кода. Попробуйте снова с экрана верификации.');
+    } catch (error) {
+      setError('Произошла ошибка при отправке кода. Пожалуйста, попробуйте позже.');
+    } finally {
+      setLoading(false);
     }
   };
   
@@ -137,198 +171,283 @@ const AuthPage = () => {
     );
   }
   
+  const renderRegistrationStep = () => {
+    switch (registrationStep) {
+      case 1:
+        return (
+          <form className="auth-form" onSubmit={(e) => { e.preventDefault(); nextStep(); }}>
+            <div className="form-group">
+              <label htmlFor="reg-username">Имя пользователя</label>
+              <input
+                type="text"
+                id="reg-username"
+                name="username"
+                value={registerData.username}
+                onChange={handleRegisterChange}
+                placeholder="Введите имя пользователя"
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={registerData.email}
+                onChange={handleRegisterChange}
+                placeholder="Введите email"
+                required
+              />
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="first_name">Имя</label>
+                <input
+                  type="text"
+                  id="first_name"
+                  name="first_name"
+                  value={registerData.first_name}
+                  onChange={handleRegisterChange}
+                  placeholder="Введите имя"
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="last_name">Фамилия</label>
+                <input
+                  type="text"
+                  id="last_name"
+                  name="last_name"
+                  value={registerData.last_name}
+                  onChange={handleRegisterChange}
+                  placeholder="Введите фамилию"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="birth_date">Дата рождения</label>
+              <input
+                type="date"
+                id="birth_date"
+                name="birth_date"
+                value={registerData.birth_date}
+                onChange={handleRegisterChange}
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="password">Пароль</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={registerData.password}
+                onChange={handleRegisterChange}
+                placeholder="Введите пароль"
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="password2">Подтверждение пароля</label>
+              <input
+                type="password"
+                id="password2"
+                name="password2"
+                value={registerData.password2}
+                onChange={handleRegisterChange}
+                placeholder="Подтвердите пароль"
+                required
+              />
+            </div>
+            
+            <button type="submit" className="auth-button next-button">
+              Далее
+            </button>
+          </form>
+        );
+      case 2:
+        return (
+          <div className="auth-form">
+            <UserTypeSelector
+              selectedType={registerData.user_type}
+              onSelect={handleUserTypeChange}
+            />
+            
+            <div className="form-buttons">
+              <button 
+                type="button" 
+                className="auth-button back-button" 
+                onClick={prevStep}
+              >
+                Назад
+              </button>
+              
+              <button 
+                type="button" 
+                className="auth-button next-button"
+                onClick={nextStep}
+                disabled={!registerData.user_type}
+              >
+                Далее
+              </button>
+            </div>
+          </div>
+        );
+      case 3:
+        return (
+          <div className="auth-form">
+            {registerData.user_type === 'job_seeker' ? (
+              <>
+                <ProfessionSelector
+                  selectedProfessions={registerData.profession_ids}
+                  onSelect={handleProfessionChange}
+                />
+                
+                <TechnologySelector
+                  selectedTechnologies={registerData.technology_ids}
+                  onSelect={handleTechnologiesChange}
+                  selectedProfessionId={selectedProfessionId}
+                />
+              </>
+            ) : (
+              <EmployerForm
+                formData={registerData}
+                onChange={(field, value) => {
+                  setRegisterData({
+                    ...registerData,
+                    [field]: value
+                  });
+                }}
+              />
+            )}
+            
+            <div className="form-buttons">
+              <button 
+                type="button" 
+                className="auth-button back-button" 
+                onClick={prevStep}
+              >
+                Назад
+              </button>
+              
+              <button 
+                type="button" 
+                className="auth-button register-button"
+                onClick={handleRegisterSubmit}
+                disabled={registerData.user_type === 'job_seeker' && registerData.profession_ids.length === 0}
+              >
+                Зарегистрироваться
+              </button>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
   
   return (
     <>
-          {showVerificationModal && (
+      {showVerificationModal && (
         <EmailVerificationModal 
           email={registeredEmail}
           onConfirm={handleVerificationConfirm}
           onCancel={handleVerificationCancel}
         />
       )}
-    <div className="auth-container">      
-      <div className="auth-card">
-        <div className="auth-logo">
-          <span className="logo-icon">✱</span>
-          <span className="logo-text">CodeMarket</span>
-        </div>
-        
-        <h1 className="auth-title">
-          {isLogin ? 'Добро пожаловать!' : 'Создание аккаунта'}
-        </h1>
-        
-        {/* {error && <div className="auth-error">{error}</div>} */}
-        
-        {isLogin ? (
-          <>
-            <form className="auth-form" onSubmit={handleLoginSubmit}>
-              <div className="form-group">
-                <label htmlFor="username">Имя пользователя</label>
-                <input
-                  type="text"
-                  id="username"
-                  name="username"
-                  value={loginData.username}
-                  onChange={handleLoginChange}
-                  placeholder="Введите имя пользователя"
-                  required
-                />
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="password">Пароль</label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={loginData.password}
-                  onChange={handleLoginChange}
-                  placeholder="Введите пароль"
-                  required
-                />
-              </div>
-              
-              <div className="forgot-password">
-                <a href="#">Забыли пароль?</a>
-              </div>
-              
-              <button type="submit" className="auth-button login-button">
-                Войти
-              </button>
-            </form>
-            
-            <div className="auth-switch">
-              <p>Нет аккаунта?</p>
-              <a
-                className="switch-button"
-                onClick={() => {
-                  setIsLogin(false);
-                  setError('');
-                }}
-              >
-                Зарегистрироваться
-              </a>
-            </div>
-          </>
-        ) : (
-          <>
-            <form className="auth-form" onSubmit={handleRegisterSubmit}>
-              <div className="form-group">
-                <label htmlFor="reg-username">Имя пользователя</label>
-                <input
-                  type="text"
-                  id="reg-username"
-                  name="username"
-                  value={registerData.username}
-                  onChange={handleRegisterChange}
-                  placeholder="Введите имя пользователя"
-                  required
-                />
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="email">Email</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={registerData.email}
-                  onChange={handleRegisterChange}
-                  placeholder="Введите email"
-                  required
-                />
-              </div>
-              
-              <div className="form-row">
+      <div className="auth-container">      
+        <div className="auth-card">
+          <div className="auth-logo">
+            <span className="logo-icon">✱</span>
+            <span className="logo-text">CodeMarket</span>
+          </div>
+          
+          <h1 className="auth-title">
+            {isLogin ? 'Добро пожаловать!' : 'Создание аккаунта'}
+          </h1>
+          
+          {error && <div className="auth-error">{error}</div>}
+          
+          {isLogin ? (
+            <>
+              <form className="auth-form" onSubmit={handleLoginSubmit}>
                 <div className="form-group">
-                  <label htmlFor="first_name">Имя</label>
+                  <label htmlFor="username">Имя пользователя</label>
                   <input
                     type="text"
-                    id="first_name"
-                    name="first_name"
-                    value={registerData.first_name}
-                    onChange={handleRegisterChange}
-                    placeholder="Введите имя"
+                    id="username"
+                    name="username"
+                    value={loginData.username}
+                    onChange={handleLoginChange}
+                    placeholder="Введите имя пользователя"
                     required
                   />
                 </div>
                 
                 <div className="form-group">
-                  <label htmlFor="last_name">Фамилия</label>
+                  <label htmlFor="password">Пароль</label>
                   <input
-                    type="text"
-                    id="last_name"
-                    name="last_name"
-                    value={registerData.last_name}
-                    onChange={handleRegisterChange}
-                    placeholder="Введите фамилию"
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={loginData.password}
+                    onChange={handleLoginChange}
+                    placeholder="Введите пароль"
                     required
                   />
                 </div>
-              </div>
+                
+                <div className="forgot-password">
+                  <a href="#">Забыли пароль?</a>
+                </div>
+                
+                <button type="submit" className="auth-button login-button">
+                  Войти
+                </button>
+              </form>
               
-              <div className="form-group">
-                <label htmlFor="age">Возраст</label>
-                <input
-                  type="number"
-                  id="age"
-                  name="age"
-                  value={registerData.age}
-                  onChange={handleRegisterChange}
-                  placeholder="Введите возраст"
-                  min="1"
-                  required
-                />
+              <div className="auth-switch">
+                <p>Нет аккаунта?</p>
+                <a
+                  className="switch-button"
+                  onClick={() => {
+                    setIsLogin(false);
+                    setError('');
+                    setRegistrationStep(1);
+                  }}
+                >
+                  Зарегистрироваться
+                </a>
               </div>
+            </>
+          ) : (
+            <>
+              {renderRegistrationStep()}
               
-              <div className="form-group">
-                <label htmlFor="reg-password">Пароль</label>
-                <input
-                  type="password"
-                  id="reg-password"
-                  name="password"
-                  value={registerData.password}
-                  onChange={handleRegisterChange}
-                  placeholder="Введите пароль"
-                  required
-                />
+              <div className="auth-switch">
+                <p>Уже есть аккаунт?</p>
+                <a
+                  className="switch-button"
+                  onClick={() => {
+                    setIsLogin(true);
+                    setError('');
+                  }}
+                >
+                  Войти
+                </a>
               </div>
-              
-              <div className="form-group">
-                <label htmlFor="password2">Подтверждение пароля</label>
-                <input
-                  type="password"
-                  id="password2"
-                  name="password2"
-                  value={registerData.password2}
-                  onChange={handleRegisterChange}
-                  placeholder="Подтвердите пароль"
-                  required
-                />
-              </div>
-              
-              <button type="submit" className="auth-button register-button">
-                Зарегистрироваться
-              </button>
-            </form>
-            
-            <div className="auth-switch">
-              <p>Уже есть аккаунт?</p>
-              <a
-                className="switch-button"
-                onClick={() => {
-                  setIsLogin(true);
-                  setError('');
-                }}
-              >
-                Войти
-              </a>
-            </div>
-          </>
-        )}
+            </>
+          )}
+        </div>
       </div>
-    </div>
     </>
   );
 };

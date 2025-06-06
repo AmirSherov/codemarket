@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { isAuthenticated, getUserData } from './auth';
 
@@ -12,26 +12,16 @@ import { isAuthenticated, getUserData } from './auth';
 export const useRouteGuard = (requireAuth = true, onAuthStateChanged = null) => {
   const router = useRouter();
   const pathname = usePathname();
-  const lastCheckedRef = useRef(0);
   const callbackRef = useRef(onAuthStateChanged);
   
-  // Обновляем callbackRef, когда меняется onAuthStateChanged
   useEffect(() => {
     callbackRef.current = onAuthStateChanged;
   }, [onAuthStateChanged]);
   
   useEffect(() => {
     const checkAuth = async () => {
-      // Проверяем, не было ли проверки в последние 2 секунды
-      const now = Date.now();
-      if (now - lastCheckedRef.current < 2000) {
-        return;
-      }
-      lastCheckedRef.current = now;
-      
       const isAuth = isAuthenticated();
       
-      // Если маршрут требует авторизации и пользователь не авторизован
       if (requireAuth && !isAuth) {
         if(pathname === '/'){
           return;
@@ -40,22 +30,18 @@ export const useRouteGuard = (requireAuth = true, onAuthStateChanged = null) => 
         return;
       }
       
-      // Если пользователь авторизован и пытается получить доступ к странице авторизации
       if (isAuth && pathname === '/pages/auth') {
         router.push('/pages/dashboard');
         return;
       }
       
-      // Если пользователь авторизован, проверяем валидность токена
       if (isAuth) {
         const userData = await getUserData();
         if (!userData && requireAuth) {
-          // Если токен недействителен и маршрут требует авторизации
           router.push('/pages/auth');
           return;
         }
         
-        // Вызываем колбэк с данными пользователя, если он предоставлен
         if (callbackRef.current) {
           callbackRef.current(userData);
         }
@@ -63,7 +49,7 @@ export const useRouteGuard = (requireAuth = true, onAuthStateChanged = null) => 
     };
     
     checkAuth();
-  }, [pathname, requireAuth, router]); // onAuthStateChanged удален из зависимостей
+  }, [pathname, requireAuth, router]);
 };
 
 /**
@@ -74,15 +60,12 @@ export const useAuthCheck = (onUserDataChange = null) => {
   const pathname = usePathname();
   const lastCheckedRef = useRef(0);
   const callbackRef = useRef(onUserDataChange);
-  
-  // Обновляем callbackRef, когда меняется onUserDataChange
   useEffect(() => {
     callbackRef.current = onUserDataChange;
   }, [onUserDataChange]);
   
   useEffect(() => {
     const checkAuthStatus = async () => {
-      // Проверяем, не было ли проверки в последние 2 секунды
       const now = Date.now();
       if (now - lastCheckedRef.current < 2000) {
         return;
@@ -100,5 +83,5 @@ export const useAuthCheck = (onUserDataChange = null) => {
     };
     
     checkAuthStatus();
-  }, [pathname]); // onUserDataChange удален из зависимостей
+  }, [pathname])
 }; 

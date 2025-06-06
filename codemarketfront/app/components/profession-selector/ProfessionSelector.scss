@@ -1,0 +1,51 @@
+.profession-selector {
+  margin-bottom: 20px;
+  
+  h3 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: #333;
+    font-weight: 500;
+  }
+  
+  .professions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+    
+    .profession-card {
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+      
+      &:hover {
+        border-color: #7c5cfc;
+        background-color: rgba(124, 92, 252, 0.05);
+      }
+      
+      &.active {
+        border-color: #7c5cfc;
+        background-color: rgba(124, 92, 252, 0.1);
+      }
+    }
+  }
+  
+  .loading-professions {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+  }
+  
+  .error-message {
+    color: #e53935;
+    padding: 10px;
+    border: 1px solid #ffcdd2;
+    border-radius: 4px;
+    background-color: #ffebee;
+    margin-bottom: 15px;
+  }
+} 

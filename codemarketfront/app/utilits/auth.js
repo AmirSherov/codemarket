@@ -2,10 +2,10 @@
 
 import axios from 'axios';
 
-// Базовый URL API
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+const isClient = typeof window !== 'undefined';
 
-// Глобальная переменная для отслеживания процесса обновления токена
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'
+
 let isRefreshing = false;
 let lastFetchTime = 0;
 
@@ -64,65 +64,32 @@ export const isAuthenticated = () => {
 /**
  * Получение данных пользователя
  */
-export const getUserData = async () => {
+export async function getUserData() {
+  if (!isClient) return null;
+  
+  const token = localStorage.getItem('access_token');
+  if (!token) return null;
+  
   try {
-    const token = getToken();
-    if (!token) return null;
-    const now = Date.now();
-    if (now - lastFetchTime < 2000) {
-      const cachedUser = localStorage.getItem('user');
-      return cachedUser ? JSON.parse(cachedUser) : null;
-    }
-    
-    lastFetchTime = now;
-
     const response = await fetch(`${API_URL}/api/auth/me/`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
     });
-
-    if (!response.ok) {
-      if (response.status === 401 && !isRefreshing) {
-        isRefreshing = true;
-        try {
-          const refreshed = await refreshToken();
-          isRefreshing = false;
-          
-          if (refreshed.success) {
-            const newToken = getToken();
-            const newResponse = await fetch(`${API_URL}/api/auth/me/`, {
-              headers: {
-                'Authorization': `Bearer ${newToken}`
-              }
-            });
-            
-            if (newResponse.ok) {
-              const userData = await newResponse.json();
-              localStorage.setItem('user', JSON.stringify(userData));
-              return userData;
-            }
-          } else {
-            removeTokens();
-            return null;
-          }
-        } catch (error) {
-          isRefreshing = false;
-          removeTokens();
-          return null;
-        }
-      }
-      throw new Error('Ошибка получения данных пользователя');
+    
+    if (response.ok) {
+      const userData = await response.json();
+      localStorage.setItem('user', JSON.stringify(userData));
+      return userData;
+    } else {
+      logout();
+      return null;
     }
-
-    const userData = await response.json();
-    localStorage.setItem('user', JSON.stringify(userData));
-    return userData;
   } catch (error) {
-    console.error('Ошибка получения данных пользователя:', error);
+    console.error('Ошибка при получении данных пользователя:', error);
     return null;
   }
-};
+}
 
 /**
  * Обновление токена
@@ -151,154 +118,275 @@ export const refreshToken = async () => {
 /**
  * Вход пользователя
  */
-export const login = async (username, password) => {
+export async function login(username, password) {
   try {
-    const response = await axios.post(`${API_URL}/api/auth/login/`, {
-      username,
-      password
-    });
-    localStorage.setItem('access_token', response.data.access);
-    localStorage.setItem('refresh_token', response.data.refresh);
-    const userResponse = await axios.get(`${API_URL}/api/auth/me/`, {
+    const response = await fetch(`${API_URL}/api/auth/login/`, {
+      method: 'POST',
       headers: {
-        'Authorization': `Bearer ${response.data.access}`
-      }
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
     });
-    localStorage.setItem('user', JSON.stringify(userResponse.data));
-    
-    return { success: true, user: userResponse.data };
-  } catch (error) {
-    console.error('Login error:', error);
-    
-    let errorMessage = 'Произошла ошибка при входе';
-    
-    if (error.response) {
-      if (error.response.data && Array.isArray(error.response.data.email_verified) && error.response.data.email_verified[0] === 'False') {
-        return { 
-          success: false, 
+
+    const data = await response.json();
+
+    if (response.ok) {
+      if (isClient) {
+        localStorage.setItem('access_token', data.access);
+        localStorage.setItem('refresh_token', data.refresh);
+        if (data.user) {
+          localStorage.setItem('user', JSON.stringify(data.user));
+        }
+      }
+      return { success: true };
+    } else {
+      const emailVerified = Array.isArray(data.email_verified) 
+        ? data.email_verified[0] === "True"
+        : data.email_verified === true || data.email_verified === "True";
+
+      if (!emailVerified) {
+        return {
+          success: false,
           requireEmailVerification: true,
-          email: error.response.data.email,
-          username: error.response.data.username,
-          first_name: error.response.data.first_name,
-          last_name: error.response.data.last_name
+          email: data.email,
+          username: data.username,
+        };
+      } else {
+        return {
+          success: false,
+          error: data.detail || 'Неверное имя пользователя или пароль',
         };
       }
-      if (error.response.status === 401) {
-        errorMessage = 'Неверное имя пользователя или пароль';
-      } else if (error.response.data?.detail) {
-        errorMessage = error.response.data.detail;
-      }
     }
-    
-    return { success: false, error: errorMessage };
+  } catch (error) {
+    console.error('Ошибка при входе:', error);
+    return {
+      success: false,
+      error: 'Произошла ошибка при входе. Пожалуйста, попробуйте позже.',
+    };
   }
-};
+}
 
 /**
  * Регистрация пользователя
  */
-export const register = async (userData) => {
+export async function register(userData) {
   try {
-    const response = await axios.post(`${API_URL}/api/auth/register/`, userData);
-    if (response.data && response.data.access_token) {
-      localStorage.setItem('access_token', response.data.access_token);
-      localStorage.setItem('refresh_token', response.data.refresh_token);
-    }
+    const formattedData = { ...userData };
     
-    return { success: true, user: response.data.user };
+    const response = await fetch(`${API_URL}/api/auth/register/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formattedData),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      return { success: true, user: data.user };
+    } else {
+      const errorMessage = data.detail || 
+        Object.values(data).flat().join(', ') || 
+        'Ошибка при регистрации';
+      
+      return { success: false, error: errorMessage };
+    }
   } catch (error) {
-    console.error('Registration error:', error);
-    let errorMessage = 'Произошла ошибка при регистрации';
-    
-    if (error.response && error.response.data) {
-      if (typeof error.response.data === 'object') {
-        const errorFields = Object.keys(error.response.data);
-        if (errorFields.length > 0) {
-          const field = errorFields[0];
-          const message = error.response.data[field];
-          errorMessage = Array.isArray(message) ? message[0] : message;
-        }
-      } else if (error.response.data.detail) {
-        errorMessage = error.response.data.detail;
-      }
-    }
-    
-    return { success: false, error: errorMessage };
+    console.error('Ошибка при регистрации:', error);
+    return {
+      success: false,
+      error: 'Произошла ошибка при регистрации. Пожалуйста, попробуйте позже.',
+    };
   }
-};
+}
 
 /**
  * Выход пользователя
  */
-export const logout = () => {
-  localStorage.removeItem('access_token');
-  localStorage.removeItem('refresh_token');
-  localStorage.removeItem('user');
-};
+export function logout() {
+  if (isClient) {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user');
+  }
+}
 
 /**
  * Получение текущего пользователя
  */
-export const getCurrentUser = () => {
-  if (typeof window === 'undefined') {
+export function getCurrentUser() {
+  if (!isClient) return null;
+  
+  const userJson = localStorage.getItem('user');
+  if (!userJson) return null;
+  
+  try {
+    return JSON.parse(userJson);
+  } catch (error) {
+    console.error('Ошибка при парсинге данных пользователя:', error);
     return null;
   }
-  
-  const user = localStorage.getItem('user');
-  return user ? JSON.parse(user) : null;
-};
+}
 
 /**
  * Проверка email
  */
-export const verifyEmail = async (code, email) => {
+export async function verifyEmail(email, code) {
   try {
-    const response = await axios.post(
-      `${API_URL}/api/auth/verify-email/`,
-      { code, email },
-      { 
-        headers: { 
-          'Content-Type': 'application/json'
-        } 
-      }
-    );
+    const response = await fetch(`${API_URL}/api/auth/verify-email/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, code }),
+    });
 
-    if (response.data.access && response.data.refresh) {
-      setTokens(response.data.access, response.data.refresh);
+    const data = await response.json();
+
+    if (response.ok) {
+      if (isClient) {
+        localStorage.setItem('access_token', data.access);
+        localStorage.setItem('refresh_token', data.refresh);
+        localStorage.setItem('user', JSON.stringify(data.user || {}));
+      }
+      return { success: true, message: data.message };
+    } else {
+      return { success: false, error: data.error || 'Ошибка при верификации email' };
     }
-    if (response.data && response.data.user) {
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-    }
-    
-    return { success: true, message: response.data.message };
   } catch (error) {
-    console.error('Email verification error:', error);
-    let errorMessage = 'Произошла ошибка при проверке кода';
-    
-    if (error.response && error.response.data && error.response.data.error) {
-      errorMessage = error.response.data.error;
-    }
-    
-    return { success: false, error: errorMessage };
+    console.error('Ошибка при верификации email:', error);
+    return {
+      success: false,
+      error: 'Произошла ошибка при верификации email. Пожалуйста, попробуйте позже.',
+    };
   }
-};
+}
 
 /**
- * Повторная отправка кода
+ * Повторная отправка кода подтверждения
  */
-export const resendVerificationCode = async (email) => {
+export async function resendVerificationCode(email) {
   try {
-    const response = await axios.post(`${API_URL}/api/auth/resend-verification/`, { email });
-    
-    return { success: true, message: response.data.message };
+    const response = await fetch(`${API_URL}/api/auth/resend-verification/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      return { success: true, message: data.message };
+    } else {
+      return { success: false, error: data.error || 'Ошибка при отправке кода' };
+    }
   } catch (error) {
-    console.error('Resend verification code error:', error);
-    let errorMessage = 'Произошла ошибка при отправке кода';
-    
-    if (error.response && error.response.data && error.response.data.error) {
-      errorMessage = error.response.data.error;
+    console.error('Ошибка при отправке кода:', error);
+    return {
+      success: false,
+      error: 'Произошла ошибка при отправке кода. Пожалуйста, попробуйте позже.',
+    };
+  }
+}
+
+/**
+ * Получение токена доступа
+ */
+export function getAccessToken() {
+  if (!isClient) return null;
+  return localStorage.getItem('access_token');
+}
+
+/**
+ * Обновление профиля пользователя
+ */
+export async function updateUserProfile(userData) {
+  try {
+    const token = getAccessToken();
+    if (!token) {
+      return { success: false, error: 'Пользователь не авторизован' };
     }
     
-    return { success: false, error: errorMessage };
+    const response = await fetch(`${API_URL}/api/auth/user/`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(userData),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      const currentUser = getCurrentUser();
+      if (currentUser && isClient) {
+        localStorage.setItem('user', JSON.stringify({ ...currentUser, ...data }));
+      }
+      return { success: true, user: data };
+    } else {
+      return { 
+        success: false, 
+        error: data.detail || Object.values(data).flat().join(', ') || 'Ошибка при обновлении профиля' 
+      };
+    }
+  } catch (error) {
+    console.error('Ошибка при обновлении профиля:', error);
+    return {
+      success: false,
+      error: 'Произошла ошибка при обновлении профиля. Пожалуйста, попробуйте позже.',
+    };
   }
-};
+}
+
+/**
+ * Получение профессий
+ */
+export async function getProfessions() {
+  try {
+    console.log('Fetching professions...');
+    const response = await fetch(`${API_URL}/api/auth/professions/`);
+    
+    if (!response.ok) {
+      throw new Error('Не удалось загрузить профессии');
+    }
+    
+    const data = await response.json();
+    console.log('Received professions:', data);
+    return { success: true, professions: data };
+  } catch (error) {
+    console.error('Ошибка при загрузке профессий:', error);
+    return {
+      success: false,
+      error: 'Произошла ошибка при загрузке профессий. Пожалуйста, попробуйте позже.',
+    };
+  }
+}
+
+/**
+ * Получение технологий по ID профессии
+ */
+export async function getTechnologiesByProfession(professionId) {
+  try {
+    console.log('Fetching technologies for profession:', professionId);
+    const response = await fetch(`${API_URL}/api/auth/technologies/?profession_id=${professionId}`);
+    
+    if (!response.ok) {
+      throw new Error('Не удалось загрузить технологии');
+    }
+    
+    const data = await response.json();
+    console.log('Received technologies:', data);
+    return { success: true, technologies: data };
+  } catch (error) {
+    console.error('Ошибка при загрузке технологий:', error);
+    return {
+      success: false,
+      error: 'Произошла ошибка при загрузке технологий. Пожалуйста, попробуйте позже.',
+    };
+  }
+}
