@@ -6,13 +6,22 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:auth": "playwright test playwright/auth/"
   },
   "dependencies": {
     "axios": "^1.9.0",
+    "js-cookie": "^3.0.5",
     "next": "15.3.3",
+    "playwright": "^1.52.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "sass": "^1.89.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0",
+    "@types/js-cookie": "^3.0.6"
   }
 }

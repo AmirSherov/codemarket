@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Loader from '../../components/loader/index';
 import { login, register, isAuthenticated, verifyEmail, resendVerificationCode } from '../../utilits/auth';
-import { useRouteGuard } from '../../utilits/routeGuard';
+import { useEnhancedRouteGuard } from '../../utilits/enhancedRouteGuard';
 import VerifyEmail from '../../components/verify-email/VerifyEmail';
 import EmailVerificationModal from '../../components/modal/EmailVerificationModal';
 import UserTypeSelector from '../../components/user-type-selector/UserTypeSelector';
@@ -43,9 +43,10 @@ const AuthPage = () => {
     technology_ids: []
   });
   
-  // Используем хук защиты маршрута с обратным требованием (requireAuth = false)
-  // Это предотвратит доступ авторизованных пользователей к странице авторизации
-  useRouteGuard(false);
+  const { loading: authCheckLoading } = useEnhancedRouteGuard({
+    requireAuth: false,
+    isAuthPage: true
+  });
   
   const handleLoginChange = (e) => {
     const { name, value } = e.target;
@@ -104,7 +105,9 @@ const AuthPage = () => {
       setError(result.error);
     }
     
-    setLoading(false);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
   };
   
   const handleRegisterSubmit = async (e) => {
@@ -132,7 +135,9 @@ const AuthPage = () => {
       setError(result.error);
     }
     
-    setLoading(false);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
   };
   
   const handleVerificationConfirm = async () => {
@@ -150,18 +155,18 @@ const AuthPage = () => {
     } catch (error) {
       setError('Произошла ошибка при отправке кода. Пожалуйста, попробуйте позже.');
     } finally {
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
     }
   };
   
   const handleVerificationCancel = () => {
     setShowVerificationModal(false);
   };
-  
-  if (loading) {
+  if (authCheckLoading || loading) {
     return <Loader />;
   }
-  
   if (showVerification) {
     return (
       <VerifyEmail 

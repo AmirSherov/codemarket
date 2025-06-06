@@ -172,6 +172,43 @@ body {
         }
       }
       
+      .auth-button {
+        display: block;
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+        margin-top: 1.5rem;
+        
+        &.login-button {
+          background-color: $primary;
+          color: white;
+          
+          &:hover {
+            background-color: $primary-dark;
+          }
+        }
+        
+        &.next-button {
+          background-color: $primary;
+          color: white;
+          
+          &:hover {
+            background-color: $primary-dark;
+          }
+          
+          &:disabled {
+            background-color: $gray-400;
+            cursor: not-allowed;
+          }
+        }
+      }
+      
       .form-buttons {
         display: flex;
         gap: 1rem;
@@ -179,6 +216,7 @@ body {
         
         .auth-button {
           flex: 1;
+          margin-top: 0;
           
           &.back-button {
             background-color: $gray-100;
@@ -413,31 +451,6 @@ body {
     
     &:hover {
       background-color: #4338ca;
-    }
-  }
-}
-
-.auth-button {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 4px;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s;
-  
-  &.login-button {
-    background-color: $primary;
-    color: white;
-    
-    &:hover {
-      background-color: darken($primary, 10%);
-    }
-    
-    &:disabled {
-      background-color: $gray-400;
-      cursor: not-allowed;
     }
   }
 }

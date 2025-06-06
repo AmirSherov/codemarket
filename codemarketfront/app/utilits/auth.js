@@ -1,6 +1,7 @@
 'use client';
 
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const isClient = typeof window !== 'undefined';
 
@@ -10,11 +11,11 @@ let isRefreshing = false;
 let lastFetchTime = 0;
 
 /**
- * Получение токена из localStorage
+ * Получение токена из localStorage и cookie
  */
 export const getToken = () => {
   if (typeof window !== 'undefined') {
-    return localStorage.getItem('access_token');
+    return localStorage.getItem('access_token') || Cookies.get('access_token');
   }
   return null;
 };
@@ -24,28 +25,46 @@ export const getToken = () => {
  */
 export const getRefreshToken = () => {
   if (typeof window !== 'undefined') {
-    return localStorage.getItem('refresh_token');
+    return localStorage.getItem('refresh_token') || Cookies.get('refresh_token');
   }
   return null;
 };
 
 /**
- * Сохранение токенов в localStorage
+ * Сохранение токенов в localStorage и cookie
  */
 export const setTokens = (accessToken, refreshToken) => {
   if (typeof window !== 'undefined') {
     localStorage.setItem('access_token', accessToken);
     localStorage.setItem('refresh_token', refreshToken);
+    const secure = window.location.protocol === 'https:';
+    Cookies.set('access_token', accessToken, { 
+      expires: 1,
+      path: '/',
+      secure: secure,
+      sameSite: 'Lax'
+    });
+    
+    Cookies.set('refresh_token', refreshToken, { 
+      expires: 7,
+      path: '/',
+      secure: secure,
+      sameSite: 'Lax'
+    });
   }
 };
 
 /**
- * Удаление токенов из localStorage
+ * Удаление токенов из localStorage и cookie
  */
 export const removeTokens = () => {
   if (typeof window !== 'undefined') {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user');
+    
+    Cookies.remove('access_token', { path: '/' });
+    Cookies.remove('refresh_token', { path: '/' });
   }
 };
 
@@ -132,8 +151,7 @@ export async function login(username, password) {
 
     if (response.ok) {
       if (isClient) {
-        localStorage.setItem('access_token', data.access);
-        localStorage.setItem('refresh_token', data.refresh);
+        setTokens(data.access, data.refresh);
         if (data.user) {
           localStorage.setItem('user', JSON.stringify(data.user));
         }
@@ -207,9 +225,7 @@ export async function register(userData) {
  */
 export function logout() {
   if (isClient) {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('user');
+    removeTokens();
   }
 }
 
@@ -247,8 +263,7 @@ export async function verifyEmail(email, code) {
 
     if (response.ok) {
       if (isClient) {
-        localStorage.setItem('access_token', data.access);
-        localStorage.setItem('refresh_token', data.refresh);
+        setTokens(data.access, data.refresh);
         localStorage.setItem('user', JSON.stringify(data.user || {}));
       }
       return { success: true, message: data.message };

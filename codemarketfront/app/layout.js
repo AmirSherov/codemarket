@@ -1,4 +1,6 @@
 import Metadata from "next";
+import RouteGuardWrapper from "./components/route-guard-wrapper";
+import "./styles/globals.scss";
 
 export const metadata = {
   title: "CodeMarket",
@@ -9,7 +11,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        {children}
+        <RouteGuardWrapper>
+          {children}
+        </RouteGuardWrapper>
       </body>
     </html>
   );

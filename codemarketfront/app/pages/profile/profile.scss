@@ -1,0 +1,491 @@
+@import '../../variables.scss';
+
+// Определяем основные цвета для профиля
+$profile-primary: #4f46e5; // Синий
+$profile-secondary: #10b981; // Зеленый
+$profile-accent: #06b6d4; // Голубой
+$profile-light: #f0fdfa; // Светло-зеленый фон
+$profile-white: #ffffff; // Белый
+$profile-gray-light: #f3f4f6; // Светло-серый
+$profile-gray: #9ca3af; // Серый
+$profile-dark: #1f2937; 
+
+.profile-page {
+  background-color: $profile-light;
+  min-height: 100vh;
+}
+
+.profile-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.profile-header {
+  position: relative;
+  background-color: $profile-white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 70px;
+  overflow: visible;
+  
+  .profile-cover {
+    height: 200px;
+    background: linear-gradient(135deg, $profile-primary, $profile-accent);
+    position: relative;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+      opacity: 0.6;
+    }
+  }
+  
+  .profile-avatar-container {
+    position: absolute;
+    left: 50px;
+    top: 200px; /* Низ обложки */
+    transform: translateY(-50%); /* Смещаем вверх на половину высоты аватара */
+    z-index: 10;
+    
+    @media (max-width: 768px) {
+      left: 50%;
+      top: 200px;
+      transform: translate(-50%, -50%);
+    }
+  }
+  
+  .profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, $profile-secondary, $profile-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $profile-white;
+    font-size: 48px;
+    font-weight: 600;
+    border: 5px solid $profile-white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-header-content {
+    padding: 24px 30px 24px 190px;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    
+    @media (max-width: 768px) {
+      padding: 80px 20px 24px;
+      text-align: center;
+    }
+    
+    .profile-name {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: $profile-dark;
+    }
+    
+    .profile-position {
+      font-size: 16px;
+      color: $profile-gray;
+      margin-bottom: 16px;
+    }
+
+    .profile-header-actions {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      margin-top: 10px;
+
+      @media (max-width: 768px) {
+        justify-content: center;
+        gap: 12px;
+      }
+    }
+    
+    .profile-edit-button {
+      background-color: $profile-secondary;
+      color: $profile-white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      display: inline-flex;
+      align-items: center;      
+      
+      &:hover {
+        background-color: darken($profile-secondary, 5%);
+      }
+    }
+
+    .logout-button {
+      background-color: transparent;
+      color: $danger;
+      border: 1px solid $danger;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-left: auto;
+
+      &:hover {
+          background-color: $danger;
+          color: white;
+      }
+
+      @media (max-width: 768px) {
+        margin-left: 0;
+      }
+    }
+  }
+}
+
+// Сообщения об успехе или ошибке
+.profile-message {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  
+  &.success {
+    background-color: rgba($profile-secondary, 0.1);
+    color: $profile-secondary;
+    border-left: 4px solid $profile-secondary;
+  }
+  
+  &.error {
+    background-color: rgba($danger, 0.1);
+    color: $danger;
+    border-left: 4px solid $danger;
+  }
+}
+.profile-content {
+  display: flex;
+  gap: 24px;
+  
+  @media (max-width: 992px) {
+    flex-direction: column;
+  }
+  
+  .profile-main {
+    flex: 1;
+  }
+  
+  .profile-sidebar {
+    width: 300px;
+    
+    @media (max-width: 992px) {
+      width: 100%;
+    }
+  }
+}
+.profile-info {
+  .profile-section {
+    background-color: $profile-white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 24px;
+    margin-bottom: 24px;
+    
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: $profile-dark;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid $profile-gray-light;
+    }
+    
+    .profile-details {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      
+      .profile-detail-item {
+        display: flex;
+        flex-wrap: wrap;
+        
+        @media (max-width: 576px) {
+          flex-direction: column;
+        }
+        
+        .detail-label {
+          width: 200px;
+          font-weight: 500;
+          color: $profile-gray;
+          
+          @media (max-width: 576px) {
+            width: 100%;
+            margin-bottom: 4px;
+          }
+        }
+        
+        .detail-value {
+          flex: 1;
+          color: $profile-dark;
+        }
+      }
+    }
+    
+    .profile-skills {
+      .skill-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        
+        .skill-tag {
+          display: inline-block;
+          padding: 6px 12px;
+          border-radius: 20px;
+          font-size: 14px;
+          font-weight: 500;
+          
+          &.profession {
+            background-color: rgba($profile-primary, 0.1);
+            color: $profile-primary;
+          }
+          
+          &.technology {
+            background-color: rgba($profile-secondary, 0.1);
+            color: $profile-secondary;
+          }
+        }
+      }
+    }
+  }
+}
+.profile-edit-form {
+  background-color: $profile-white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 24px;
+  
+  h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: $profile-dark;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid $profile-gray-light;
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    
+    @media (max-width: 576px) {
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .form-group {
+      flex: 1;
+      
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: $profile-dark;
+      }
+      
+      input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid $profile-gray-light;
+        border-radius: 8px;
+        font-size: 15px;
+        
+        &:focus {
+          outline: none;
+          border-color: $profile-primary;
+          box-shadow: 0 0 0 2px rgba($profile-primary, 0.1);
+        }
+        
+        &:disabled {
+          background-color: $profile-gray-light;
+          cursor: not-allowed;
+        }
+      }
+      
+      small {
+        display: block;
+        margin-top: 6px;
+        font-size: 12px;
+        color: $profile-gray;
+      }
+    }
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 30px;
+    
+    button {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      
+      &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+      
+      &.cancel-button {
+        background-color: $profile-gray-light;
+        color: $profile-dark;
+        border: none;
+        
+        &:hover:not(:disabled) {
+          background-color: darken($profile-gray-light, 5%);
+        }
+      }
+      
+      &.save-button {
+        background-color: $profile-secondary;
+        color: $profile-white;
+        border: none;
+        
+        &:hover:not(:disabled) {
+          background-color: darken($profile-secondary, 5%);
+        }
+      }
+    }
+  }
+}
+.profile-card {
+  background-color: $profile-white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  margin-bottom: 24px;
+  
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: $profile-dark;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid $profile-gray-light;
+  }
+  
+  h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: $profile-dark;
+    margin-bottom: 10px;
+  }
+  
+  .profile-stats {
+    display: flex;
+    justify-content: space-between;
+    
+    .stat-item {
+      text-align: center;
+      flex: 1;
+      
+      .stat-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: $profile-primary;
+        margin-bottom: 4px;
+      }
+      
+      .stat-label {
+        font-size: 14px;
+        color: $profile-gray;
+      }
+    }
+  }
+  
+  .profile-contacts {
+    .contact-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+      
+      .contact-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+        font-size: 18px;
+      }
+      
+      .contact-info {
+        font-size: 14px;
+        color: $profile-dark;
+        word-break: break-word;
+      }
+    }
+  }
+  
+  // Стили для секции с навыками и технологиями в боковой панели
+  .profile-skills-sidebar {
+    .skills-section {
+      margin-bottom: 16px;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+      
+      .skill-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+        
+        .skill-tag {
+          display: inline-block;
+          padding: 6px 12px;
+          border-radius: 20px;
+          font-size: 14px;
+          font-weight: 500;
+          
+          &.profession {
+            background-color: rgba($profile-primary, 0.1);
+            color: $profile-primary;
+          }
+          
+          &.technology {
+            background-color: rgba($profile-secondary, 0.1);
+            color: $profile-secondary;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+        }
+      }
+      
+      .no-skills {
+        color: $profile-gray;
+        font-style: italic;
+        margin-top: 8px;
+        font-size: 14px;
+      }
+    }
+  }
+}
