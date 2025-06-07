@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { getUserData } from '../../utilits/auth';
+import { getUserData } from '../../utilits/api';
 import Loader from '../../components/loader/index';
 import './dashboard.scss';
 import DashboardNavigation from '../../components/dashboard/navigation';

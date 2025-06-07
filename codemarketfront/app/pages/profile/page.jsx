@@ -1,11 +1,11 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import DashboardNavigation from '../../components/dashboard/navigation';
-import { updateUserProfile, getUserData } from '../../utilits/auth';
+import { updateUserProfile, getUserData } from '../../utilits/api';
 import Loader from '../../components/loader';
 import { useRouter } from 'next/navigation';
 import './profile.scss';
-import { logout } from '../../utilits/auth';
+import { logout } from '../../utilits/api';
 
 function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
@@ -16,13 +16,17 @@ function ProfilePage() {
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
-    email: '',
     birth_date: '',
     company_name: '',
     company_position: '',
+    user_type: '',
+    description: '',
   });
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const avatarInputRef = useRef(null);
 
   useEffect(() => {
     const fetchPageData = async () => {
@@ -33,10 +37,12 @@ function ProfilePage() {
         setFormData({
           first_name: user.first_name || '',
           last_name: user.last_name || '',
+          user_type: user.user_type || '',
           email: user.email || '',
           birth_date: user.birth_date || '',
           company_name: user.company_name || '',
           company_position: user.company_position || '',
+          description: user.description || '',
         });
       }
       setLoading(false);
@@ -52,17 +58,39 @@ function ProfilePage() {
     }));
   };
 
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      setAvatarFile(file);
+      setAvatarPreview(URL.createObjectURL(file));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaveLoading(true);
     setErrorMessage('');
     setSuccessMessage('');
 
+    const submissionData = new FormData();
+    for (const key in formData) {
+      if (formData[key] !== null && formData[key] !== undefined) {
+          submissionData.append(key, formData[key]);
+      }
+    }
+
+    if (avatarFile) {
+      submissionData.append('avatar', avatarFile, avatarFile.name);
+    }
+
     try {
-      const result = await updateUserProfile(formData);
+      const result = await updateUserProfile(submissionData);
       if (result.success) {
         setSuccessMessage('Профиль успешно обновлен!');
         setIsEditing(false);
+        setUserData(result.user);
+        setAvatarFile(null);
+        setAvatarPreview(null);
         setTimeout(() => setSuccessMessage(''), 3000);
       } else {
         setErrorMessage(result.error || 'Ошибка при обновлении профиля');
@@ -83,10 +111,13 @@ function ProfilePage() {
         birth_date: userData.birth_date || '',
         company_name: userData.company_name || '',
         company_position: userData.company_position || '',
+        description: userData.description || '',
       });
     }
     setIsEditing(false);
     setErrorMessage('');
+    setAvatarFile(null);
+    setAvatarPreview(null);
   };
   const formatBirthDate = (dateString) => {
     if (!dateString) return 'Не указана';
@@ -144,14 +175,40 @@ function ProfilePage() {
       <div className="profile-container">
         <div className="profile-header">
           <div className="profile-cover"></div>
-          <div className="profile-avatar-container">
-            <div className="profile-avatar">
-              <span>{getUserInitials()}</span>
+          <div className="profile-header-main">
+            <div className="profile-avatar-container">
+              <div className="profile-avatar">
+                {avatarPreview ? (
+                  <img src={avatarPreview} alt="Предпросмотр аватара" />
+                ) : userData?.avatar ? (
+                  <img src={userData.avatar} alt="Аватар" />
+                ) : (
+                  <span>{getUserInitials()}</span>
+                )}
+              </div>
+              {isEditing && (
+                <>
+                  <input
+                    type="file"
+                    ref={avatarInputRef}
+                    onChange={handleAvatarChange}
+                    style={{ display: 'none' }}
+                    accept="image/*"
+                  />
+                  <button
+                    type="button"
+                    className="change-avatar-button"
+                    onClick={() => avatarInputRef.current && avatarInputRef.current.click()}
+                  >
+                    <span className="edit-icon"></span>
+                  </button>
+                </>
+              )}
             </div>
-          </div>
-          <div className="profile-header-content">
-            <h1 className="profile-name">{userData?.first_name} {userData?.last_name}</h1>
-            <p className="profile-position">{userData?.company_position || 'Должность не указана'}</p>
+            <div className="profile-header-content">
+              <h1 className="profile-name">{userData?.first_name} {userData?.last_name}</h1>
+              <p className="profile-position">{userData?.company_position || 'Должность не указана'}</p>
+            </div>
             <div className="profile-header-actions">
               {!isEditing && (
                 <button 
@@ -252,6 +309,7 @@ function ProfilePage() {
                         name="company_name"
                         value={formData.company_name}
                         onChange={handleChange}
+                        disabled={formData.user_type === 'job_seeker'? true : false}
                         placeholder="Введите название компании"
                       />
                     </div>
@@ -263,8 +321,25 @@ function ProfilePage() {
                         name="company_position"
                         value={formData.company_position}
                         onChange={handleChange}
+                        disabled={formData.user_type === 'job_seeker'? true : false}
                         placeholder="Введите должность"
                       />
+                    </div>
+                  </div>
+
+                  <div className="form-row">
+                    <div className="form-group full-width">
+                      <label htmlFor="description">Описание</label>
+                      <textarea
+                        id="description"
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
+                        placeholder="Расскажите о себе"
+                        rows="4"
+                        maxLength="260"
+                      />
+                      <small className="char-counter">{formData.description?.length || 0}/260</small>
                     </div>
                   </div>
 
@@ -308,6 +383,13 @@ function ProfilePage() {
                       <div className="detail-label">Возраст</div>
                       <div className="detail-value">{calculateAge(userData?.birth_date)} лет</div>
                     </div>
+                  </div>
+                </div>
+
+                <div className="profile-section">
+                  <h2>О себе</h2>
+                  <div className="profile-description">
+                    <p>{userData?.description || 'Пользователь еще не добавил описание.'}</p>
                   </div>
                 </div>
 

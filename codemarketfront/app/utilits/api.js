@@ -319,31 +319,26 @@ export function getAccessToken() {
 /**
  * Обновление профиля пользователя
  */
-export async function updateUserProfile(userData) {
+export async function updateUserProfile(formData) {
   try {
     const token = getAccessToken();
     if (!token) {
       return { success: false, error: 'Пользователь не авторизован' };
     }
     
-    const response = await fetch(`${API_URL}/api/auth/user/`, {
-      method: 'PATCH',
+    const response = await fetch(`${API_URL}/api/auth/me/`, {
+      method: 'PUT',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify(userData),
+      body: formData,
     });
 
-    const data = await response.json();
-
     if (response.ok) {
-      const currentUser = getCurrentUser();
-      if (currentUser && isClient) {
-        localStorage.setItem('user', JSON.stringify({ ...currentUser, ...data }));
-      }
-      return { success: true, user: data };
+      const updatedUserData = await getUserData();
+      return { success: true, user: updatedUserData };
     } else {
+      const data = await response.json();
       return { 
         success: false, 
         error: data.detail || Object.values(data).flat().join(', ') || 'Ошибка при обновлении профиля' 

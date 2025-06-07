@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import './VerifyEmail.scss';
-import { verifyEmail, resendVerificationCode } from '../../utilits/auth';
+import { verifyEmail, resendVerificationCode } from '../../utilits/api';
 
 const VerifyEmail = ({ email, onSuccess, onBack }) => {
   const router = useRouter();

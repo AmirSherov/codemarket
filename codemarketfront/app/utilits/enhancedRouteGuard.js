@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { isAuthenticated, getUserData, getToken, refreshToken } from './auth';
+import { isAuthenticated, getUserData, getToken, refreshToken } from './api';
 
 /**
  * Улучшенный хук для защиты маршрутов с дополнительными проверками безопасности

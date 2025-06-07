@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './ProfessionSelector.scss';
-import { getProfessions } from '../../utilits/auth';
+import { getProfessions } from '../../utilits/api';
 
 const ProfessionSelector = ({ selectedProfessions, onSelect }) => {
   const [professions, setProfessions] = useState([]);

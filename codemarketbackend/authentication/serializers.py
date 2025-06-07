@@ -21,7 +21,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'username', 'email', 'password', 'first_name', 'last_name',
             'birth_date', 'user_type', 'company_name', 'company_position',
-            'profession_ids', 'technology_ids'
+            'profession_ids', 'technology_ids', 'description'
         )
         
     def validate_profession_ids(self, value):
@@ -62,7 +62,7 @@ class UserSerializer(serializers.ModelSerializer):
             'id', 'username', 'email', 'first_name', 'last_name',
             'user_type', 'company_name', 'company_position',
             'profession_ids', 'technology_ids', 'professions', 'technologies',
-            'birth_date'
+            'birth_date', 'description', 'avatar'
         )
     
     def get_professions(self, obj):
@@ -97,7 +97,8 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
         fields = (
             'first_name', 'last_name', 'user_type',
             'company_name', 'company_position',
-            'profession_ids', 'technology_ids'
+            'profession_ids', 'technology_ids',
+            'birth_date', 'description', 'avatar'
         )
         
     def validate_profession_ids(self, value):

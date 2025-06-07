@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Loader from '../../components/loader/index';
-import { login, register, isAuthenticated, verifyEmail, resendVerificationCode } from '../../utilits/auth';
+import { login, register, isAuthenticated, verifyEmail, resendVerificationCode } from '../../utilits/api';
 import { useEnhancedRouteGuard } from '../../utilits/enhancedRouteGuard';
 import VerifyEmail from '../../components/verify-email/VerifyEmail';
 import EmailVerificationModal from '../../components/modal/EmailVerificationModal';

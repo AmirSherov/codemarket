@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './TechnologySelector.scss';
-import { getTechnologiesByProfession } from '../../utilits/auth';
+import { getTechnologiesByProfession } from '../../utilits/api';
 
 const TechnologySelector = ({ selectedProfessionId, selectedTechnologies, onSelect }) => {
   const [technologies, setTechnologies] = useState([]);

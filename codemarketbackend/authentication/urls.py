@@ -7,7 +7,7 @@ from .views import (
     VerifyEmailView,
     ResendVerificationCodeView,
     ProfessionViewSet,
-    TechnologyViewSet
+    TechnologyViewSet,
 )
 
 urlpatterns = [
