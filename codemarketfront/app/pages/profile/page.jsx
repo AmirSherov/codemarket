@@ -424,50 +424,6 @@ function ProfilePage() {
                     </div>
                   </div>
                 </div>
-                <div className="profile-section">
-                  <h2>Профессиональные навыки</h2>
-                  <div className="profile-skills">
-                    {userData?.professions && userData.professions.length > 0 ? (
-                      <div className="profile-detail-item">
-                        <div className="detail-label">Профессии</div>
-                        <div className="detail-value">
-                          <div className="skill-tags">
-                            {userData.professions.map(profession => (
-                              <span key={profession.id} className="skill-tag profession">
-                                {profession.name}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="profile-detail-item">
-                        <div className="detail-label">Профессии</div>
-                        <div className="detail-value">Не указаны</div>
-                      </div>
-                    )}
-                    
-                    {userData?.technologies && userData.technologies.length > 0 ? (
-                      <div className="profile-detail-item">
-                        <div className="detail-label">Технологии</div>
-                        <div className="detail-value">
-                          <div className="skill-tags">
-                            {userData.technologies.map(tech => (
-                              <span key={tech.id} className="skill-tag technology" title={tech.name}>
-                                {tech.name}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="profile-detail-item">
-                        <div className="detail-label">Технологии</div>
-                        <div className="detail-value">Не указаны</div>
-                      </div>
-                    )}
-                  </div>
-                </div>
               </div>
             )}
           </div>
