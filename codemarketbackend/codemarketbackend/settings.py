@@ -164,27 +164,27 @@ WSGI_APPLICATION = 'codemarketbackend.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # SQLite для разработки
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-# PostgreSQL для продакшена
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'codemarketdatabase', 
-        'USER': 'codemarketdatabase_user', 
-        'PASSWORD': 'VdUekxk4FJwysBMsgkaLhn9dqV1uwwkL',  
-        'HOST': 'dpg-d1218smmcj7s73erp3hg-a.oregon-postgres.render.com',
-        'PORT': '5432',  
-        'OPTIONS': {
-            'sslmode': 'require'  
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# PostgreSQL для продакшена
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'codemarketdatabase', 
+#         'USER': 'codemarketdatabase_user', 
+#         'PASSWORD': 'VdUekxk4FJwysBMsgkaLhn9dqV1uwwkL',  
+#         'HOST': 'dpg-d1218smmcj7s73erp3hg-a.oregon-postgres.render.com',
+#         'PORT': '5432',  
+#         'OPTIONS': {
+#             'sslmode': 'require'  
+#         }
+#     }
+# }
 
 
 # Password validation
