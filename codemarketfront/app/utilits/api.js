@@ -5,7 +5,8 @@ import Cookies from 'js-cookie';
 
 const isClient = typeof window !== 'undefined';
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'
+// export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://codemarketbackend.onrender.com'
 
 let isRefreshing = false;
 let lastFetchTime = 0;
