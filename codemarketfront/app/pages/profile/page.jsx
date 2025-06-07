@@ -27,6 +27,17 @@ function ProfilePage() {
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
   const avatarInputRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchPageData = async () => {
@@ -205,7 +216,7 @@ function ProfilePage() {
                 </>
               )}
             </div>
-            <div className="profile-header-content">
+            <div className={`profile-header-content ${isMobile ? 'mobile-view' : ''}`}>
               <h1 className="profile-name">{userData?.first_name} {userData?.last_name}</h1>
               <p className="profile-position">{userData?.company_position || 'Должность не указана'}</p>
             </div>
@@ -215,14 +226,14 @@ function ProfilePage() {
                   className="profile-edit-button" 
                   onClick={() => setIsEditing(true)}
                 >
-                  <span className="edit-icon"></span>Редактировать профиль
+                  {isMobile ? 'Редактировать' : 'Редактировать профиль'}
                 </button>
               )}
               <button
                 className="logout-button"
                 onClick={handleLogout}
               >
-                  Выйти
+                  {isMobile ? 'Выход' : 'Выйти'}
               </button>
             </div>
           </div>
@@ -246,7 +257,7 @@ function ProfilePage() {
               <div className="profile-edit-form">
                 <h2>Редактирование профиля</h2>
                 <form onSubmit={handleSubmit}>
-                  <div className="form-row">
+                  <div className={`form-row ${isMobile ? 'mobile-row' : ''}`}>
                     <div className="form-group">
                       <label htmlFor="first_name">Имя</label>
                       <input
@@ -300,7 +311,7 @@ function ProfilePage() {
                     </div>
                   </div>
 
-                  <div className="form-row">
+                  <div className={`form-row ${isMobile ? 'mobile-row' : ''}`}>
                     <div className="form-group">
                       <label htmlFor="company_name">Компания</label>
                       <input
@@ -357,7 +368,7 @@ function ProfilePage() {
                       className="save-button" 
                       disabled={saveLoading}
                     >
-                      {saveLoading ? 'Сохранение...' : 'Сохранить изменения'}
+                      {saveLoading ? 'Сохранение...' : 'Сохранить'}
                     </button>
                   </div>
                 </form>
